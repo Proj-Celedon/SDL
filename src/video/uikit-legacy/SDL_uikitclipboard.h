@@ -18,34 +18,18 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+#ifndef SDL_uikitclipboard_h_
+#define SDL_uikitclipboard_h_
 
-#include "../SDL_sysurl.h"
+#include "../SDL_sysvideo.h"
 
-#import <UIKit/UIKit.h>
-#import <Availability.h>
+extern int UIKit_SetClipboardText(_THIS, const char *text);
+extern char *UIKit_GetClipboardText(_THIS);
+extern SDL_bool UIKit_HasClipboardText(_THIS);
 
-int SDL_SYS_OpenURL(const char *url)
-{
-    @autoreleasepool {
-        NSString *nsstr = [NSString stringWithUTF8String:url];
-        NSURL *nsurl = [NSURL URLWithString:nsstr];
-        if (![[UIApplication sharedApplication] canOpenURL:nsurl]) {
-            return SDL_SetError("No handler registered for this type of URL");
-        }
-#ifdef __IPHONE_10_0
-        if (@available(iOS 10.0, tvOS 10.0, *)) {
-            [[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:^(BOOL success) {}];
-        }
-        else
-#else
-        {
-            #ifndef SDL_PLATFORM_VISIONOS   /* Fallback is never available in any version of VisionOS (but correct API always is). */
-            [[UIApplication sharedApplication] openURL:nsurl];
-            #endif
-        }
-#endif
-        return 0;
-    }
-}
+extern void UIKit_InitClipboard(_THIS);
+extern void UIKit_QuitClipboard(_THIS);
+
+#endif /* SDL_uikitclipboard_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

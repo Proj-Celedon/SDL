@@ -306,7 +306,6 @@ int SDL_InitSubSystem(Uint32 flags)
         goto quit_and_error;
 #endif
     }
-
     /* Initialize the joystick subsystem */
     if (flags & SDL_INIT_JOYSTICK) {
 #ifndef SDL_JOYSTICK_DISABLED
@@ -654,7 +653,9 @@ SDL_bool SDL_IsTablet(void)
     return SDL_IsAndroidTablet();
 #elif defined(__IPHONEOS__)
     extern SDL_bool SDL_IsIPad(void);
-    return SDL_IsIPad();
+// TODO reenable
+//    return SDL_IsIPad();
+    return SDL_FALSE;
 #else
     return SDL_FALSE;
 #endif

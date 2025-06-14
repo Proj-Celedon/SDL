@@ -19,33 +19,27 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "../SDL_sysurl.h"
-
 #import <UIKit/UIKit.h>
-#import <Availability.h>
 
-int SDL_SYS_OpenURL(const char *url)
-{
-    @autoreleasepool {
-        NSString *nsstr = [NSString stringWithUTF8String:url];
-        NSURL *nsurl = [NSURL URLWithString:nsstr];
-        if (![[UIApplication sharedApplication] canOpenURL:nsurl]) {
-            return SDL_SetError("No handler registered for this type of URL");
-        }
-#ifdef __IPHONE_10_0
-        if (@available(iOS 10.0, tvOS 10.0, *)) {
-            [[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:^(BOOL success) {}];
-        }
-        else
-#else
-        {
-            #ifndef SDL_PLATFORM_VISIONOS   /* Fallback is never available in any version of VisionOS (but correct API always is). */
-            [[UIApplication sharedApplication] openURL:nsurl];
-            #endif
-        }
-#endif
-        return 0;
-    }
-}
+@interface SDLLaunchScreenController : UIViewController
+
+- (instancetype)init;
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
+- (void)loadView;
+
+@end
+
+@interface SDLUIKitDelegate : NSObject<UIApplicationDelegate>
+
++ (id)sharedAppDelegate;
++ (NSString *)getAppDelegateClassName;
+
+/* This property is marked as optional, and is only intended to be used when
+ * the app's UI is storyboard-based. SDL is not storyboard-based, however
+ * several major third-party ad APIs (e.g. Google admob) incorrectly assume this
+ * property always exists, and will crash if it doesn't. */
+@property (nonatomic) UIWindow *window;
+
+@end
 
 /* vi: set ts=4 sw=4 expandtab: */

@@ -39,13 +39,6 @@ void *SDL_LoadObject(const char *sofile)
     void *handle;
     const char *loaderror;
 
-#ifdef SDL_VIDEO_DRIVER_UIKIT
-    if (!UIKit_IsSystemVersionAtLeast(8.0)) {
-        SDL_SetError("SDL_LoadObject requires iOS 8+");
-        return NULL;
-    }
-#endif
-
     handle = dlopen(sofile, RTLD_NOW | RTLD_LOCAL);
     loaderror = dlerror();
     if (!handle) {

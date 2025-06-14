@@ -19,33 +19,32 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "../SDL_sysurl.h"
-
 #import <UIKit/UIKit.h>
-#import <Availability.h>
 
-int SDL_SYS_OpenURL(const char *url)
-{
-    @autoreleasepool {
-        NSString *nsstr = [NSString stringWithUTF8String:url];
-        NSURL *nsurl = [NSURL URLWithString:nsstr];
-        if (![[UIApplication sharedApplication] canOpenURL:nsurl]) {
-            return SDL_SetError("No handler registered for this type of URL");
-        }
-#ifdef __IPHONE_10_0
-        if (@available(iOS 10.0, tvOS 10.0, *)) {
-            [[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:^(BOOL success) {}];
-        }
-        else
+#include "../SDL_sysvideo.h"
+
+#include "SDL_touch.h"
+
+#if !TARGET_OS_TV && defined(__IPHONE_13_4)
+@interface SDL_uikitview : UIView <UIPointerInteractionDelegate>
 #else
-        {
-            #ifndef SDL_PLATFORM_VISIONOS   /* Fallback is never available in any version of VisionOS (but correct API always is). */
-            [[UIApplication sharedApplication] openURL:nsurl];
-            #endif
-        }
+@interface SDL_uikitview : UIView
 #endif
-        return 0;
-    }
-}
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+- (void)setSDLWindow:(SDL_Window *)window;
+
+#if !TARGET_OS_TV && defined(__IPHONE_13_4)
+- (UIPointerRegion *)pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion API_AVAILABLE(ios(13.4));
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction styleForRegion:(UIPointerRegion *)region  API_AVAILABLE(ios(13.4));
+#endif
+
+- (CGPoint)touchLocation:(UITouch *)touch shouldNormalize:(BOOL)normalize;
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+
+@end
 
 /* vi: set ts=4 sw=4 expandtab: */
