@@ -244,7 +244,7 @@ GL_CheckAllErrors(const char *prefix, SDL_Renderer *renderer, const char *file, 
 
 static int GLES2_LoadFunctions(GLES2_RenderData *data)
 {
-#if defined(SDL_VIDEO_DRIVER_UIKIT) !defined(SDL_VIDEO_DRIVER_UIKIT_LEGACY)
+#if defined(SDL_VIDEO_DRIVER_UIKIT) && !defined(SDL_VIDEO_DRIVER_UIKIT_LEGACY)
 #define __SDL_NOGETPROCADDR__
 #elif defined(SDL_VIDEO_DRIVER_ANDROID)
 #define __SDL_NOGETPROCADDR__
